@@ -3,6 +3,7 @@ package async
 import java.util.concurrent.atomic.AtomicInteger
 
 import org.scalatest.FunSuite
+
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future, Promise, TimeoutException}
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -116,5 +117,24 @@ class AsyncSuite extends FunSuite {
     assertResult(3)(counter.get())
   }
 
+  test("futurize should handle successful computation results") {
+    val success = Success(Random.nextInt())
+    val succeeding = new Async.CallbackBasedApi {
+      def computeIntAsync(continuation: Try[Int] => Unit): Unit = continuation(success)
+    }
+    val eventuallyInt = Async.futurize(succeeding).computeIntAsync()
+    Await.ready(eventuallyInt, 200.milliseconds)
+    assertResult(success)(eventuallyInt.value.get)
+  }
+
+  test("futurize should handle failed computation results") {
+    val failure = Failure(new Exception("Oops"))
+    val failing = new Async.CallbackBasedApi {
+      def computeIntAsync(continuation: Try[Int] => Unit): Unit = continuation(failure)
+    }
+    val eventuallyInt = Async.futurize(failing).computeIntAsync()
+    Await.ready(eventuallyInt, 200.milliseconds)
+    assertResult(failure)(eventuallyInt.value.get)
+  }
 }
 

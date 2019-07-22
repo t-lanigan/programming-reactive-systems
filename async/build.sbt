@@ -17,8 +17,8 @@ scalacOptions ++= Seq(
 
 scalacOptions in Test += "-Ywarn-value-discard:false" // since this often appears in expectNext(expected) testing style in streams
 
-val akkaVersion = "2.5.16"
-val akkaHttpVersion = "10.1.4"
+val akkaVersion = "2.5.21"
+val akkaHttpVersion = "10.1.8"
 
 libraryDependencies ++= Seq(
   "com.typesafe.akka"        %% "akka-stream"              % akkaVersion,
@@ -29,8 +29,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka"        %% "akka-actor-typed"         % akkaVersion,
 
   // Used by protocols assignment
-  "org.fusesource.leveldbjni" % "leveldbjni-all"           % "1.8",
-  "com.github.romix.akka"    %% "akka-kryo-serialization"  % "0.5.0",
   "com.typesafe.akka"        %% "akka-actor-testkit-typed" % akkaVersion % Test,
 
   "org.scalacheck"           %% "scalacheck"               % "1.13.5"    % Test,
